@@ -1,3 +1,4 @@
+import { Offer } from './../../offers/entities/offer.entity';
 import { Wishlist } from './../../wishlists/entities/wishlist.entity';
 import { User } from './../../users/entities/user.entity';
 import { IsUrl, Length } from 'class-validator';
@@ -40,7 +41,6 @@ export class Wish {
   })
   raised: number;
 
-  @Column()
   @ManyToOne(() => User, (user) => user.wishes)
   owner: User;
 
@@ -48,8 +48,8 @@ export class Wish {
   @Length(1, 1024)
   description: string;
 
-  @Column()
-  offers: string[];
+  @ManyToMany(() => Offer, (offer) => offer.item)
+  offers: Offer[];
 
   @ManyToMany(() => Wishlist, (wishlist) => wishlist.items)
   @JoinTable()

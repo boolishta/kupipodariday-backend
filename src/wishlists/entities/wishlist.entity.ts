@@ -8,7 +8,6 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -42,5 +41,5 @@ export class Wishlist {
   items: Wish[];
 
   @ManyToOne(() => User, (user) => user.wishlists)
-  owner: User;
+  user: User;
 }

@@ -1,3 +1,4 @@
+import { Wishlist } from './../../wishlists/entities/wishlist.entity';
 import { User } from './../../users/entities/user.entity';
 import { IsUrl, Length } from 'class-validator';
 import {
@@ -7,6 +8,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -26,13 +29,13 @@ export class Wish {
   image: string;
 
   @Column({
-    type: 'int',
+    type: 'decimal',
     precision: 100,
   })
   price: number;
 
   @Column({
-    type: 'int',
+    type: 'decimal',
     precision: 100,
   })
   raised: number;
@@ -48,7 +51,11 @@ export class Wish {
   @Column()
   offers: string[];
 
-  @Column()
+  @ManyToMany(() => Wishlist, (wishlist) => wishlist.items)
+  @JoinTable()
+  wishlists: Wishlist[];
+
+  @Column({ default: 0 })
   copied: number;
 
   @CreateDateColumn()

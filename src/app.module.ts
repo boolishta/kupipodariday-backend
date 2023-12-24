@@ -23,7 +23,5 @@ import { Wishlist } from './wishlists/entities/wishlist.entity';
     }),
     UsersModule,
   ],
-  controllers: [UsersController],
-  providers: [UsersService],
 })
 export class AppModule {}

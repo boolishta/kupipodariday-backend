@@ -13,6 +13,7 @@ import {
   Patch,
 } from '@nestjs/common';
 import { User } from './entities/user.entity';
+import { ERROR_MESSAGE } from 'src/errors';
 
 @Controller('users')
 export class UsersController {
@@ -21,6 +22,15 @@ export class UsersController {
   @Get()
   findAll(): Promise<User[]> {
     return this.userService.findAll();
+  }
+
+  @Get(':id')
+  async findById(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    const user = await this.userService.findById(id);
+    if (!user) {
+      throw new NotFoundException(ERROR_MESSAGE.UserNotFound);
+    }
+    return user;
   }
 
   @Post()
@@ -32,7 +42,7 @@ export class UsersController {
   async removeById(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.findById(id);
     if (!user) {
-      throw new NotFoundException('Пользователь не найден');
+      throw new NotFoundException(ERROR_MESSAGE.UserNotFound);
     }
     return this.userService.removeById(id);
   }
@@ -44,7 +54,7 @@ export class UsersController {
   ) {
     const user = await this.userService.findById(id);
     if (!user) {
-      throw new NotFoundException('Пользователь не найден');
+      throw new NotFoundException(ERROR_MESSAGE.UserNotFound);
     }
     return this.userService.updateById(id, updateUserDto);
   }

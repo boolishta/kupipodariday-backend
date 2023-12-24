@@ -1,7 +1,5 @@
 import { UsersModule } from './users/users.module';
 import { Wish } from './wishes/entities/wish.entity';
-import { UsersService } from './users/users.service';
-import { UsersController } from './users/users.controller';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';

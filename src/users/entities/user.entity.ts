@@ -16,10 +16,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    type: 'varchar',
-    unique: true,
-  })
+  @Column()
   @Length(2, 30)
   @IsNotEmpty()
   username: string;

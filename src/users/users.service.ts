@@ -1,20 +1,33 @@
-import { UsersRepository } from './users.repository';
+import { ErrorCode } from './../exceptions/error-codes';
+import { ServerException } from './../exceptions/server.exception';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly userRepository: UsersRepository) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
   findAll(): Promise<User[]> {
+    // TODO: возвращать без пароля
     return this.userRepository.find();
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = await this.userRepository.create(createUserDto);
-    return this.userRepository.save(user);
+    try {
+      // TODO: хэшировать пароль
+      const user = this.userRepository.create(createUserDto);
+      const result = await this.userRepository.save(user);
+      return result;
+    } catch (e) {
+      throw new ServerException(ErrorCode.UserAlreadyExists);
+    }
   }
 
   async findById(id: number): Promise<User> {
@@ -25,6 +38,10 @@ export class UsersService {
 
   findByUsername(username: string): Promise<User> {
     return this.userRepository.findOneBy({ username });
+  }
+
+  findByEmail(email: string): Promise<User> {
+    return this.userRepository.findOneBy({ email });
   }
 
   removeById(id: number) {

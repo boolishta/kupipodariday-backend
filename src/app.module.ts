@@ -1,3 +1,4 @@
+import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { Wish } from './wishes/entities/wish.entity';
@@ -9,6 +10,7 @@ import { Wishlist } from './wishlists/entities/wishlist.entity';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: '127.0.0.1',

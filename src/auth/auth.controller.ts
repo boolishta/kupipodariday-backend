@@ -26,7 +26,6 @@ export class AuthController {
   async signup(@Body() createUserDto: CreateUserDto) {
     /* При регистрации создаём пользователя и генерируем для него токен */
     const user = await this.usersService.create(createUserDto);
-
     return this.authService.auth(user);
   }
 }

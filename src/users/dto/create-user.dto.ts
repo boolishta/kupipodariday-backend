@@ -10,7 +10,6 @@ export class CreateUserDto {
   @Length(2, 200)
   about: string;
 
-  @IsString()
   avatar: string;
 
   @IsNotEmpty()

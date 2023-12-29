@@ -1,3 +1,4 @@
+import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { Wish } from './wishes/entities/wish.entity';
 import { Module } from '@nestjs/common';
@@ -20,6 +21,7 @@ import { Wishlist } from './wishlists/entities/wishlist.entity';
       schema: 'nest_project',
     }),
     UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

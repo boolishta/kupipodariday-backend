@@ -41,4 +41,17 @@ export class WishesService {
   remove(id: number) {
     return `This action removes a #${id} wish`;
   }
+
+  async getLastWish() {
+    const wish = await this.wishesRepository.find({
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: {
+        owner: true,
+      },
+      take: 1,
+    });
+    return wish;
+  }
 }

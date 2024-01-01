@@ -33,6 +33,12 @@ export class WishesController {
     return this.wishesService.findAll();
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/last')
+  getLastWish() {
+    return this.wishesService.getLastWish();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.wishesService.findOne(+id);

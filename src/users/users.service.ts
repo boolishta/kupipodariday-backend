@@ -7,7 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -94,5 +94,11 @@ export class UsersService {
       throw new ServerException(ErrorCode.UserNotFound);
     }
     return user.wishes;
+  }
+
+  findMany(query: string): Promise<User[]> {
+    return this.userRepository.find({
+      where: [{ username: Like(`%${query}%`) }, { email: ILike(`%${query}%`) }],
+    });
   }
 }

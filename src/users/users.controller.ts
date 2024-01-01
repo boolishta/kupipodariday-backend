@@ -1,3 +1,4 @@
+import { FindUserDto } from './dto/find-user.dto';
 import { JwtGuard } from './../guards/jwt.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -11,6 +12,7 @@ import {
   Req,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Post,
 } from '@nestjs/common';
 
 @Controller('users')
@@ -49,5 +51,10 @@ export class UsersController {
   @Get(':username/wishes')
   userWishes(@Param('username') username: string) {
     return this.userService.getUserWishesByUsername(username);
+  }
+
+  @Post('/find')
+  findMany(@Body() findUserDto: FindUserDto) {
+    return this.userService.findMany(findUserDto.query);
   }
 }

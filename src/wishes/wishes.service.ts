@@ -30,8 +30,19 @@ export class WishesService {
     return `This action returns all wishes`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} wish`;
+  // TODO: offers relations
+
+  async findOne(id: number) {
+    const wish = await this.wishesRepository.findOne({
+      where: { id },
+      relations: {
+        owner: true,
+      },
+    });
+    if (!wish) {
+      throw new ServerException(ErrorCode.WishNotFound);
+    }
+    return wish;
   }
 
   update(id: number, updateWishDto: UpdateWishDto) {

@@ -45,6 +45,7 @@ export class WishesController {
     return this.wishesService.getFirstWish();
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.wishesService.findOne(+id);

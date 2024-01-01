@@ -22,9 +22,16 @@ export class UsersController {
 
   @UseGuards(JwtGuard)
   @Get('/me')
-  async profile(@Req() req) {
+  profile(@Req() req) {
     const user = req.user;
     return this.userService.findByUsername(user.username);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch('/me')
+  async updateProfile(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    const user = req.user;
+    return this.userService.updateById(user.id, updateUserDto);
   }
 
   @Get()
@@ -47,14 +54,5 @@ export class UsersController {
   async removeById(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.findById(id);
     return this.userService.removeById(id);
-  }
-
-  @Patch(':id')
-  async updateById(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    const user = await this.userService.findById(id);
-    return this.userService.updateById(id, updateUserDto);
   }
 }

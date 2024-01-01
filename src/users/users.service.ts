@@ -53,7 +53,15 @@ export class UsersService {
     return this.userRepository.delete({ id });
   }
 
-  updateById(id: number, updateUserDto: UpdateUserDto) {
-    return this.userRepository.update({ id }, updateUserDto);
+  async updateById(id: number, updateUserDto: UpdateUserDto) {
+    const hash = await this.hashService.hashPassword(updateUserDto.password);
+    await this.userRepository.update(
+      { id },
+      {
+        ...updateUserDto,
+        password: hash,
+      },
+    );
+    return this.findById(id);
   }
 }

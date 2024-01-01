@@ -27,7 +27,7 @@ export class UsersService {
         username: createUserDto.username,
         email: createUserDto.email,
         about: createUserDto.about,
-        avatar: createUserDto.about,
+        avatar: createUserDto.avatar,
         password: hash,
       });
       const result = await this.userRepository.save(user);
@@ -37,10 +37,8 @@ export class UsersService {
     }
   }
 
-  async findById(id: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
-    delete user.password;
-    return user;
+  findById(id: number): Promise<User> {
+    return this.userRepository.findOneBy({ id });
   }
 
   findByUsername(username: string): Promise<User> {

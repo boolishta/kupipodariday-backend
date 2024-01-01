@@ -45,4 +45,9 @@ export class UsersController {
   getUserByUsername(@Param('username') username: string) {
     return this.userService.getUserByUsername(username);
   }
+
+  @Get(':username/wishes')
+  userWishes(@Param('username') username: string) {
+    return this.userService.getUserWishesByUsername(username);
+  }
 }

@@ -80,4 +80,19 @@ export class UsersService {
 
     return user;
   }
+
+  async getUserWishesByUsername(username: string): Promise<Wish[]> {
+    const user = await this.userRepository.findOne({
+      where: {
+        username,
+      },
+      relations: {
+        wishes: true,
+      },
+    });
+    if (!user) {
+      throw new ServerException(ErrorCode.UserNotFound);
+    }
+    return user.wishes;
+  }
 }

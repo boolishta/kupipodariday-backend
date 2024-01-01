@@ -17,7 +17,6 @@ export class UsersService {
   ) {}
 
   findAll(): Promise<User[]> {
-    // TODO: возвращать без пароля
     return this.userRepository.find();
   }
 

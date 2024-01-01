@@ -1,13 +1,14 @@
+import { Wish } from './wishes/entities/wish.entity';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { Wish } from './wishes/entities/wish.entity';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { Offer } from './offers/entities/offer.entity';
 import { Wishlist } from './wishlists/entities/wishlist.entity';
 import { HashModule } from './hash/hash.module';
+import { WishesModule } from './wishes/wishes.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { HashModule } from './hash/hash.module';
     UsersModule,
     AuthModule,
     HashModule,
+    WishesModule,
   ],
 })
 export class AppModule {}

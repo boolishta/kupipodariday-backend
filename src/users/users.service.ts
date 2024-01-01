@@ -17,10 +17,6 @@ export class UsersService {
     private readonly hashService: HashService,
   ) {}
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
       const hash = await this.hashService.hashPassword(createUserDto.password);
@@ -44,14 +40,6 @@ export class UsersService {
 
   findByUsername(username: string): Promise<User> {
     return this.userRepository.findOneBy({ username });
-  }
-
-  findByEmail(email: string): Promise<User> {
-    return this.userRepository.findOneBy({ email });
-  }
-
-  removeById(id: number) {
-    return this.userRepository.delete({ id });
   }
 
   async updateById(id: number, updateUserDto: UpdateUserDto) {
@@ -79,5 +67,17 @@ export class UsersService {
       throw new ServerException(ErrorCode.UserNotFound);
     }
     return user.wishes;
+  }
+
+  async getUserByUsername(username: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { username },
+    });
+
+    if (!user) {
+      throw new ServerException(ErrorCode.UserNotFound);
+    }
+
+    return user;
   }
 }

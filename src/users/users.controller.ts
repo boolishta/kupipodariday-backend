@@ -1,26 +1,24 @@
 import { JwtGuard } from './../guards/jwt.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import {
   Controller,
   Get,
-  Post,
   Body,
-  Delete,
   Param,
-  ParseIntPipe,
   Patch,
   UseGuards,
   Req,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
-import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
   @UseGuards(JwtGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('/me')
   profile(@Req() req) {
     const user = req.user;
@@ -28,6 +26,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Patch('/me')
   updateProfile(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     const user = req.user;
@@ -36,30 +35,14 @@ export class UsersController {
 
   @UseGuards(JwtGuard)
   @Get('/me/wishes')
-  async wishes(@Req() req) {
+  wishes(@Req() req) {
     const user = req.user;
     return this.userService.getUserWishes(user.id);
   }
 
-  @Get()
-  findAll(): Promise<User[]> {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  async findById(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    const user = await this.userService.findById(id);
-    return user;
-  }
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
-  @Delete(':id')
-  async removeById(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.userService.findById(id);
-    return this.userService.removeById(id);
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(':username')
+  getUserByUsername(@Param('username') username: string) {
+    return this.userService.getUserByUsername(username);
   }
 }

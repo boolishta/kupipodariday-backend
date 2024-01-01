@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -45,11 +46,10 @@ export class User {
   @IsEmail()
   email: string;
 
-  @Column({
-    type: 'varchar',
-  })
+  @Column()
   @IsNotEmpty()
   @MinLength(2)
+  @Exclude()
   password: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)

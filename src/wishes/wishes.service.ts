@@ -49,8 +49,16 @@ export class WishesService {
     return `This action updates a #${id} wish`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wish`;
+  async remove(userId: number, id: number) {
+    const wish = await this.wishesRepository.findOne({
+      where: { id, owner: { id: userId } },
+    });
+
+    if (!wish) {
+      throw new ServerException(ErrorCode.WishNotFound);
+    }
+
+    await this.wishesRepository.delete(wish.id);
   }
 
   async getLastWish() {

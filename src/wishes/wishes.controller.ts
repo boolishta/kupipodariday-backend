@@ -11,6 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
@@ -56,8 +57,10 @@ export class WishesController {
     return this.wishesService.update(+id, updateWishDto);
   }
 
+  @UseGuards(JwtGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishesService.remove(+id);
+  remove(@Req() req, @Param('id', ParseIntPipe) id: number) {
+    const user = req.user;
+    return this.wishesService.remove(user.id, id);
   }
 }

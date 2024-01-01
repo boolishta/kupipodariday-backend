@@ -6,11 +6,14 @@ export enum ErrorCode {
 }
 
 export const code2message = new Map<ErrorCode, string>([
-  [ErrorCode.LoginOrPasswordIncorrect, 'Login or password is incorrect'],
-  [ErrorCode.UserAlreadyExists, 'User already exists'],
+  [ErrorCode.LoginOrPasswordIncorrect, 'Некорректная пара логин и пароль'],
+  [
+    ErrorCode.UserAlreadyExists,
+    'Пользователь с таким email или username уже зарегистрирован',
+  ],
 ]);
 
 export const code2status = new Map<ErrorCode, HttpStatus>([
-  [ErrorCode.LoginOrPasswordIncorrect, HttpStatus.BAD_REQUEST],
-  [ErrorCode.UserAlreadyExists, HttpStatus.BAD_REQUEST],
+  [ErrorCode.LoginOrPasswordIncorrect, HttpStatus.UNAUTHORIZED],
+  [ErrorCode.UserAlreadyExists, HttpStatus.CONFLICT],
 ]);

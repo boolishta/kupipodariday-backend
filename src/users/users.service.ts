@@ -1,3 +1,4 @@
+import { Wish } from './../wishes/entities/wish.entity';
 import { HashService } from './../hash/hash.service';
 import { ErrorCode } from './../exceptions/error-codes';
 import { ServerException } from './../exceptions/server.exception';
@@ -63,5 +64,20 @@ export class UsersService {
       },
     );
     return this.findById(id);
+  }
+
+  async getUserWishes(id: number): Promise<Wish[]> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        wishes: true,
+      },
+    });
+    if (!user) {
+      throw new ServerException(ErrorCode.UserNotFound);
+    }
+    return user.wishes;
   }
 }

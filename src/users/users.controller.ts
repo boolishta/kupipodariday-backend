@@ -29,9 +29,16 @@ export class UsersController {
 
   @UseGuards(JwtGuard)
   @Patch('/me')
-  async updateProfile(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+  updateProfile(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     const user = req.user;
     return this.userService.updateById(user.id, updateUserDto);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('/me/wishes')
+  async wishes(@Req() req) {
+    const user = req.user;
+    return this.userService.getUserWishes(user.id);
   }
 
   @Get()

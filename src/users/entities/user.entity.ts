@@ -1,7 +1,7 @@
 import { Offer } from './../../offers/entities/offer.entity';
 import { Wishlist } from './../../wishlists/entities/wishlist.entity';
 import { Wish } from './../../wishes/entities/wish.entity';
-import { IsEmail, IsNotEmpty, Length } from 'class-validator';
+import { IsEmail, IsNotEmpty, Length, MinLength } from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -16,7 +16,10 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    unique: true,
+  })
   @Length(2, 30)
   @IsNotEmpty()
   username: string;
@@ -42,7 +45,11 @@ export class User {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+  })
+  @IsNotEmpty()
+  @MinLength(2)
   password: string;
 
   @OneToMany(() => Wish, (wish) => wish.owner)

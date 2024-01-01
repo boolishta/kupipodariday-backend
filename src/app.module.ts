@@ -19,7 +19,7 @@ import { Wishlist } from './wishlists/entities/wishlist.entity';
       password: 'student',
       database: 'nest_project',
       entities: [User, Wish, Offer, Wishlist],
-      synchronize: false,
+      synchronize: true,
       schema: 'nest_project',
     }),
     UsersModule,

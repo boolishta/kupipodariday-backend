@@ -1,3 +1,4 @@
+import { HashService } from './../hash/hash.service';
 import { ErrorCode } from './../exceptions/error-codes';
 import { ServerException } from './../exceptions/server.exception';
 import { User } from './entities/user.entity';
@@ -12,6 +13,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly hashService: HashService,
   ) {}
 
   findAll(): Promise<User[]> {
@@ -21,8 +23,14 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      // TODO: хэшировать пароль
-      const user = this.userRepository.create(createUserDto);
+      const hash = await this.hashService.hashPassword(createUserDto.password);
+      const user = this.userRepository.create({
+        username: createUserDto.username,
+        email: createUserDto.email,
+        about: createUserDto.about,
+        avatar: createUserDto.about,
+        password: hash,
+      });
       const result = await this.userRepository.save(user);
       return result;
     } catch (e) {

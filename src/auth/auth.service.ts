@@ -1,3 +1,4 @@
+import { HashService } from './../hash/hash.service';
 import { Injectable } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
@@ -8,6 +9,7 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private usersService: UsersService,
+    private hashService: HashService,
   ) {}
 
   auth(user: User) {
@@ -18,9 +20,12 @@ export class AuthService {
 
   async validatePassword(username: string, password: string) {
     const user = await this.usersService.findByUsername(username);
-
-    /* В идеальном случае пароль обязательно должен быть захэширован */
-    if (user && user.password === password) {
+    if (!user) return null;
+    const matched = await this.hashService.verifyPassword(
+      password,
+      user.password,
+    );
+    if (matched) {
       /* Исключаем пароль из результата */
       const { password, ...result } = user;
 

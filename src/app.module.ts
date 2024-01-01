@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { Offer } from './offers/entities/offer.entity';
 import { Wishlist } from './wishlists/entities/wishlist.entity';
+import { HashModule } from './hash/hash.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Wishlist } from './wishlists/entities/wishlist.entity';
     }),
     UsersModule,
     AuthModule,
+    HashModule,
   ],
 })
 export class AppModule {}

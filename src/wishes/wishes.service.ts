@@ -54,4 +54,17 @@ export class WishesService {
     });
     return wish;
   }
+
+  async getFirstWish() {
+    const wish = await this.wishesRepository.find({
+      order: {
+        createdAt: 'ASC',
+      },
+      relations: {
+        owner: true,
+      },
+      take: 1,
+    });
+    return wish;
+  }
 }

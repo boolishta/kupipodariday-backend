@@ -4,17 +4,15 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
   Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
 
 @Controller('offers')
 export class OffersController {
@@ -28,23 +26,9 @@ export class OffersController {
     return this.offersService.create(user.id, createOfferDto);
   }
 
-  @Get()
-  findAll() {
-    return this.offersService.findAll();
-  }
-
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.offersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOfferDto: UpdateOfferDto) {
-    return this.offersService.update(+id, updateOfferDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.offersService.remove(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.offersService.findOneWithRelations(id);
   }
 }

@@ -6,7 +6,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Offer } from './entities/offer.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -47,19 +46,17 @@ export class OffersService {
     return result;
   }
 
-  findAll() {
-    return this.offersRepository.find();
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} offer`;
-  }
-
-  update(id: number, updateOfferDto: UpdateOfferDto) {
-    return `This action updates a #${id} offer`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} offer`;
+  async findOneWithRelations(id: number) {
+    const offer = await this.offersRepository.findOne({
+      where: { id, hidden: false },
+      relations: {
+        user: true,
+        item: true,
+      },
+    });
+    if (!offer) {
+      throw new ServerException(ErrorCode.OfferNotFound);
+    }
+    return offer;
   }
 }

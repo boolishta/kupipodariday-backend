@@ -29,11 +29,6 @@ export class WishesController {
     return this.wishesService.create(user.id, createWishDto);
   }
 
-  @Get()
-  findAll() {
-    return this.wishesService.findAll();
-  }
-
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/last')
   getLastWish() {
@@ -49,12 +44,19 @@ export class WishesController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.wishesService.findOne(+id);
+    return this.wishesService.findWishById(+id);
   }
 
+  @UseGuards(JwtGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
-    return this.wishesService.update(+id, updateWishDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateWishDto: UpdateWishDto,
+    @Req() req,
+  ) {
+    const user = req.user;
+    return this.wishesService.update(user.id, id, updateWishDto);
   }
 
   @UseGuards(JwtGuard)

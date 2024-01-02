@@ -26,13 +26,9 @@ export class WishesService {
     return result;
   }
 
-  findAll() {
-    return `This action returns all wishes`;
-  }
-
   // TODO: offers relations
 
-  async findOne(id: number) {
+  async findWishById(id: number) {
     const wish = await this.wishesRepository.findOne({
       where: { id },
       relations: {
@@ -45,8 +41,20 @@ export class WishesService {
     return wish;
   }
 
-  update(id: number, updateWishDto: UpdateWishDto) {
-    return `This action updates a #${id} wish`;
+  findWishByUserId(userId: number, wishId: number) {
+    return this.wishesRepository.findOne({
+      where: { id: wishId, owner: { id: userId } },
+    });
+  }
+
+  async update(userId: number, id: number, updateWishDto: UpdateWishDto) {
+    const wish = await this.findWishByUserId(userId, id);
+    if (!wish) {
+      throw new ServerException(ErrorCode.WishNotFound);
+    }
+    await this.wishesRepository.update({ id }, updateWishDto);
+    const updatedWish = await this.findWishById(wish.id);
+    return updatedWish;
   }
 
   async remove(userId: number, id: number) {

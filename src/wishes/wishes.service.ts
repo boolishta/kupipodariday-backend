@@ -58,14 +58,10 @@ export class WishesService {
   }
 
   async remove(userId: number, id: number) {
-    const wish = await this.wishesRepository.findOne({
-      where: { id, owner: { id: userId } },
-    });
-
+    const wish = await this.findWishByUserId(userId, id);
     if (!wish) {
       throw new ServerException(ErrorCode.WishNotFound);
     }
-
     await this.wishesRepository.delete(wish.id);
   }
 

@@ -9,6 +9,7 @@ import { Offer } from './offers/entities/offer.entity';
 import { Wishlist } from './wishlists/entities/wishlist.entity';
 import { HashModule } from './hash/hash.module';
 import { WishesModule } from './wishes/wishes.module';
+import { OffersModule } from './offers/offers.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { WishesModule } from './wishes/wishes.module';
     AuthModule,
     HashModule,
     WishesModule,
+    OffersModule,
   ],
 })
 export class AppModule {}

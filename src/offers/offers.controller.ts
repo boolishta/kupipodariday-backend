@@ -1,3 +1,4 @@
+import { JwtGuard } from './../guards/jwt.guard';
 import {
   Controller,
   Get,
@@ -6,6 +7,10 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  Req,
 } from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
@@ -15,9 +20,12 @@ import { UpdateOfferDto } from './dto/update-offer.dto';
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
 
+  @UseGuards(JwtGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
-  create(@Body() createOfferDto: CreateOfferDto) {
-    return this.offersService.create(createOfferDto);
+  create(@Body() createOfferDto: CreateOfferDto, @Req() req) {
+    const user = req.user;
+    return this.offersService.create(user.id, createOfferDto);
   }
 
   @Get()

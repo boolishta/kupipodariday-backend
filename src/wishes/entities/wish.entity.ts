@@ -1,7 +1,7 @@
 import { Offer } from '../../offers/entities/offer.entity';
 import { Wishlist } from '../../wishlists/entities/wishlist.entity';
 import { User } from '../../users/entities/user.entity';
-import { IsUrl, Length, Min } from 'class-validator';
+import { IsUrl, Length } from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -44,12 +44,12 @@ export class Wish {
     type: 'decimal',
     precision: 100,
     scale: 2,
+    default: 0,
     transformer: {
       to: (value: number) => value,
       from: (value: string) => parseFloat(value),
     },
   })
-  @Min(1)
   raised: number;
 
   @ManyToOne(() => User, (user) => user.wishes)

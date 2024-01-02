@@ -26,8 +26,6 @@ export class WishesService {
     return result;
   }
 
-  // TODO: offers relations
-
   async findWishById(id: number) {
     const wish = await this.wishesRepository.findOne({
       where: { id },
@@ -55,6 +53,12 @@ export class WishesService {
     await this.wishesRepository.update({ id }, updateWishDto);
     const updatedWish = await this.findWishById(wish.id);
     return updatedWish;
+  }
+
+  async updateWishRaised(id: number, raised: number) {
+    const wish = await this.findWishById(id);
+    wish.raised = raised;
+    this.wishesRepository.save(wish);
   }
 
   async remove(userId: number, id: number) {
@@ -107,7 +111,6 @@ export class WishesService {
     newWish.link = wish.link;
     newWish.image = wish.image;
     newWish.price = wish.price;
-    newWish.raised = wish.raised;
     newWish.description = wish.description;
     newWish.owner = owner;
 

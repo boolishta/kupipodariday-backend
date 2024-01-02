@@ -43,6 +43,7 @@ export class UsersService {
   }
 
   async updateById(id: number, updateUserDto: UpdateUserDto) {
+    // TODO: обновлять только те данные которые пришли с фронта
     const hash = await this.hashService.hashPassword(updateUserDto.password);
     await this.userRepository.update(
       { id },

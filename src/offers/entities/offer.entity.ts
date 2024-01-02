@@ -26,7 +26,15 @@ export class Offer {
   @ManyToOne(() => Wish, (wish) => wish.offers)
   item: Wish;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    },
+  })
   amount: number;
 
   @Column({ default: false })

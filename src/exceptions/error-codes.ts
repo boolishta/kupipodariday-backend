@@ -6,6 +6,8 @@ export enum ErrorCode {
   Unauthorized = 102,
   UserNotFound = 103,
   WishNotFound = 104,
+  NotAllowedContributions = 105,
+  AmountCannotExceedValueGift = 106,
 }
 
 export const code2message = new Map<ErrorCode, string>([
@@ -17,6 +19,14 @@ export const code2message = new Map<ErrorCode, string>([
   [ErrorCode.Unauthorized, 'Пользователь не авторизирован'],
   [ErrorCode.UserNotFound, 'Пользователь не найден'],
   [ErrorCode.WishNotFound, 'Подарок не найден'],
+  [
+    ErrorCode.NotAllowedContributions,
+    'Пользователю нельзя вносить деньги на собственные подарки',
+  ],
+  [
+    ErrorCode.AmountCannotExceedValueGift,
+    'Сумма собранных средств не может превышать стоимость подарка.',
+  ],
 ]);
 
 export const code2status = new Map<ErrorCode, HttpStatus>([
@@ -25,4 +35,6 @@ export const code2status = new Map<ErrorCode, HttpStatus>([
   [ErrorCode.Unauthorized, HttpStatus.UNAUTHORIZED],
   [ErrorCode.UserNotFound, HttpStatus.NOT_FOUND],
   [ErrorCode.WishNotFound, HttpStatus.NOT_FOUND],
+  [ErrorCode.NotAllowedContributions, HttpStatus.UNPROCESSABLE_ENTITY],
+  [ErrorCode.AmountCannotExceedValueGift, HttpStatus.UNPROCESSABLE_ENTITY],
 ]);

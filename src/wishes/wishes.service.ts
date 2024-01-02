@@ -90,4 +90,30 @@ export class WishesService {
     });
     return wish;
   }
+
+  async copyWish(userId: number, id: number) {
+    const owner = await this.userService.findById(userId);
+    if (!owner) {
+      throw new ServerException(ErrorCode.UserNotFound);
+    }
+    const wish = await this.wishesRepository.findOne({
+      where: { id },
+    });
+    if (!wish) {
+      throw new ServerException(ErrorCode.WishNotFound);
+    }
+    const newWish = new Wish();
+    newWish.name = wish.name;
+    newWish.link = wish.link;
+    newWish.image = wish.image;
+    newWish.price = wish.price;
+    newWish.raised = wish.raised;
+    newWish.description = wish.description;
+    newWish.owner = owner;
+
+    wish.copied = (wish.copied || 0) + 1;
+
+    await this.wishesRepository.save([wish, newWish]);
+    return newWish;
+  }
 }

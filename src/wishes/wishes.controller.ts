@@ -65,4 +65,12 @@ export class WishesController {
     const user = req.user;
     return this.wishesService.remove(user.id, id);
   }
+
+  @UseGuards(JwtGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post(':id/copy')
+  copy(@Req() req, @Param('id', ParseIntPipe) id: number) {
+    const user = req.user;
+    return this.wishesService.copyWish(user.id, id);
+  }
 }

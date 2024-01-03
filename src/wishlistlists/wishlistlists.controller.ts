@@ -40,15 +40,19 @@ export class WishlistlistsController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number, @Req() req) {
     const user = req.user;
-    return this.wishlistlistsService.findOneByUserId(user.id, id);
+    return this.wishlistlistsService.findOneByUserIdWithRelations(user.id, id);
   }
 
+  @UseGuards(JwtGuard)
   @Patch(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateWishlistlistDto: UpdateWishlistlistDto,
+    @Req() req,
   ) {
-    return this.wishlistlistsService.update(+id, updateWishlistlistDto);
+    const user = req.user;
+    return this.wishlistlistsService.update(user.id, id, updateWishlistlistDto);
   }
 
   @UseGuards(JwtGuard)

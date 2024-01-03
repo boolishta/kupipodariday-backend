@@ -72,6 +72,21 @@ export class WishlistlistsService {
           id: userId,
         },
       },
+    });
+    if (!wishlist) {
+      throw new ServerException(ErrorCode.WishlistNotFound);
+    }
+    return wishlist;
+  }
+
+  async findOneByUserIdWithRelations(userId: number, id: number) {
+    const wishlist = await this.wishlistlistsRepository.findOne({
+      where: {
+        id,
+        owner: {
+          id: userId,
+        },
+      },
       relations: {
         owner: true,
         items: true,
@@ -83,8 +98,31 @@ export class WishlistlistsService {
     return wishlist;
   }
 
-  update(id: number, updateWishlistlistDto: UpdateWishlistlistDto) {
-    return `This action updates a #${id} wishlistlist`;
+  async update(
+    userId: number,
+    id: number,
+    updateWishlistlistDto: UpdateWishlistlistDto,
+  ) {
+    const wishlist = await this.findOneByUserId(userId, id);
+    if (updateWishlistlistDto.image) {
+      wishlist.image = updateWishlistlistDto.image;
+    }
+    if (updateWishlistlistDto.name) {
+      wishlist.name = updateWishlistlistDto.name;
+    }
+    if (updateWishlistlistDto.itemsId) {
+      const items: Wish[] = [];
+
+      for (const wishId of updateWishlistlistDto.itemsId) {
+        const wish = await this.wishService.findWishById(wishId);
+        if (!wish) {
+          throw new ServerException(ErrorCode.WishNotFound);
+        }
+        items.push(wish);
+      }
+      wishlist.items = items;
+    }
+    return this.wishlistlistsRepository.save(wishlist);
   }
 
   async remove(userId: number, id: number) {

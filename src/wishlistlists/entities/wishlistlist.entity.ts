@@ -28,8 +28,7 @@ export class Wishlistlist {
   @Max(250)
   name: string;
 
-  @Column()
-  @Min(1)
+  @Column({ nullable: true })
   @Max(1500)
   description: string;
 
@@ -41,5 +40,5 @@ export class Wishlistlist {
   items: Wish[];
 
   @ManyToOne(() => User, (user) => user.wishlists)
-  user: User;
+  owner: User;
 }

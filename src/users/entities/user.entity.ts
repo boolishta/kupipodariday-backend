@@ -58,7 +58,7 @@ export class User {
   @OneToMany(() => Offer, (offer) => offer.user)
   offers: Offer[];
 
-  @OneToMany(() => Wishlistlist, (wishlist) => wishlist.user)
+  @OneToMany(() => Wishlistlist, (wishlist) => wishlist.owner)
   wishlists: Wishlistlist[];
 
   @CreateDateColumn()

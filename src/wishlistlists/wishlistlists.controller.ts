@@ -11,6 +11,7 @@ import {
   Req,
   UseInterceptors,
   ClassSerializerInterceptor,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { WishlistlistsService } from './wishlistlists.service';
 import { CreateWishlistlistDto } from './dto/create-wishlistlist.dto';
@@ -33,9 +34,12 @@ export class WishlistlistsController {
     return this.wishlistlistsService.findAll();
   }
 
+  @UseGuards(JwtGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.wishlistlistsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number, @Req() req) {
+    const user = req.user;
+    return this.wishlistlistsService.findOneByUserId(user.id, id);
   }
 
   @Patch(':id')

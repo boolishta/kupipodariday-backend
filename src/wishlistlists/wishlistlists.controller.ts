@@ -1,3 +1,4 @@
+import { JwtGuard } from './../guards/jwt.guard';
 import {
   Controller,
   Get,
@@ -6,6 +7,10 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { WishlistlistsService } from './wishlistlists.service';
 import { CreateWishlistlistDto } from './dto/create-wishlistlist.dto';
@@ -15,9 +20,12 @@ import { UpdateWishlistlistDto } from './dto/update-wishlistlist.dto';
 export class WishlistlistsController {
   constructor(private readonly wishlistlistsService: WishlistlistsService) {}
 
+  @UseGuards(JwtGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
-  create(@Body() createWishlistlistDto: CreateWishlistlistDto) {
-    return this.wishlistlistsService.create(createWishlistlistDto);
+  create(@Body() createWishlistlistDto: CreateWishlistlistDto, @Req() req) {
+    const user = req.user;
+    return this.wishlistlistsService.create(user.id, createWishlistlistDto);
   }
 
   @Get()

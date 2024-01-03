@@ -1,3 +1,8 @@
+import { Wish } from './../wishes/entities/wish.entity';
+import { WishesService } from './../wishes/wishes.service';
+import { ErrorCode } from './../exceptions/error-codes';
+import { ServerException } from './../exceptions/server.exception';
+import { UsersService } from './../users/users.service';
 import { Wishlistlist } from './entities/wishlistlist.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
@@ -9,15 +14,38 @@ import { Repository } from 'typeorm';
 export class WishlistlistsService {
   constructor(
     @InjectRepository(Wishlistlist)
-    private readonly wishesRepository: Repository<Wishlistlist>,
+    private readonly wishlistlistsRepository: Repository<Wishlistlist>,
+    private readonly userService: UsersService,
+    private readonly wishService: WishesService,
   ) {}
 
-  create(createWishlistlistDto: CreateWishlistlistDto) {
-    return 'This action adds a new wishlistlist';
+  async create(userId: number, createWishlistlistDto: CreateWishlistlistDto) {
+    const user = await this.userService.findById(userId);
+    if (!user) {
+      throw new ServerException(ErrorCode.UserNotFound);
+    }
+
+    const items: Wish[] = [];
+
+    for (const wishId of createWishlistlistDto.itemsId) {
+      const wish = await this.wishService.findWishById(wishId);
+      if (!wish) {
+        throw new ServerException(ErrorCode.WishNotFound);
+      }
+      items.push(wish);
+    }
+
+    const wishlistlists = await this.wishlistlistsRepository.create({
+      user,
+      items,
+      image: createWishlistlistDto.image,
+    });
+
+    return wishlistlists;
   }
 
   findAll() {
-    return this.wishesRepository.find();
+    return this.wishlistlistsRepository.find();
   }
 
   findOne(id: number) {

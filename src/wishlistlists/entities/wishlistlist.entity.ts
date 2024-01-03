@@ -36,7 +36,6 @@ export class Wishlistlist {
   image: string;
 
   @ManyToMany(() => Wish, (wish) => wish.wishlists)
-  @JoinTable()
   items: Wish[];
 
   @ManyToOne(() => User, (user) => user.wishlists)

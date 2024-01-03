@@ -67,6 +67,7 @@ export class WishesService {
       throw new ServerException(ErrorCode.WishNotFound);
     }
     await this.wishesRepository.delete(wish.id);
+    return wish;
   }
 
   async getLastWish() {

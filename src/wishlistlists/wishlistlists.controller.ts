@@ -29,6 +29,7 @@ export class WishlistlistsController {
     return this.wishlistlistsService.create(user.id, createWishlistlistDto);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   findAll() {
     return this.wishlistlistsService.findAll();
@@ -50,8 +51,11 @@ export class WishlistlistsController {
     return this.wishlistlistsService.update(+id, updateWishlistlistDto);
   }
 
+  @UseGuards(JwtGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishlistlistsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req) {
+    const user = req.user;
+    return this.wishlistlistsService.remove(user.id, id);
   }
 }

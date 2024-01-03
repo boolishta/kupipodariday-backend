@@ -44,7 +44,12 @@ export class WishlistlistsService {
   }
 
   findAll() {
-    return this.wishlistlistsRepository.find();
+    return this.wishlistlistsRepository.find({
+      relations: {
+        owner: true,
+        items: true,
+      },
+    });
   }
 
   findOneWithRelations(id: number) {
@@ -82,7 +87,9 @@ export class WishlistlistsService {
     return `This action updates a #${id} wishlistlist`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wishlistlist`;
+  async remove(userId: number, id: number) {
+    const wishlist = await this.findOneByUserId(userId, id);
+    await this.wishlistlistsRepository.delete(wishlist.id);
+    return wishlist;
   }
 }

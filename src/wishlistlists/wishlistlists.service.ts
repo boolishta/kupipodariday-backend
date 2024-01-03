@@ -98,12 +98,30 @@ export class WishlistlistsService {
     return wishlist;
   }
 
+  async findOneByUserIdWithOwnerRelation(userId: number, id: number) {
+    const wishlist = await this.wishlistlistsRepository.findOne({
+      where: {
+        id,
+        owner: {
+          id: userId,
+        },
+      },
+      relations: {
+        owner: true,
+      },
+    });
+    if (!wishlist) {
+      throw new ServerException(ErrorCode.WishlistNotFound);
+    }
+    return wishlist;
+  }
+
   async update(
     userId: number,
     id: number,
     updateWishlistlistDto: UpdateWishlistlistDto,
   ) {
-    const wishlist = await this.findOneByUserId(userId, id);
+    const wishlist = await this.findOneByUserIdWithOwnerRelation(userId, id);
     if (updateWishlistlistDto.image) {
       wishlist.image = updateWishlistlistDto.image;
     }

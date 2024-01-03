@@ -1,5 +1,5 @@
+import { Wishlistlist } from './../../wishlistlists/entities/wishlistlist.entity';
 import { Offer } from './../../offers/entities/offer.entity';
-import { Wishlist } from '../../wishlists/entities/wishlist.entity';
 import { Wish } from './../../wishes/entities/wish.entity';
 import { IsEmail, IsNotEmpty, Length, MinLength } from 'class-validator';
 import {
@@ -58,8 +58,8 @@ export class User {
   @OneToMany(() => Offer, (offer) => offer.user)
   offers: Offer[];
 
-  @OneToMany(() => Wishlist, (wishlist) => wishlist.user)
-  wishlists: Wishlist[];
+  @OneToMany(() => Wishlistlist, (wishlist) => wishlist.user)
+  wishlists: Wishlistlist[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,4 +1,4 @@
-import { Wishlist } from './wishlists/entities/wishlist.entity';
+import { Wishlistlist } from './wishlistlists/entities/wishlistlist.entity';
 import { Wish } from './wishes/entities/wish.entity';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
@@ -10,7 +10,7 @@ import { Offer } from './offers/entities/offer.entity';
 import { HashModule } from './hash/hash.module';
 import { WishesModule } from './wishes/wishes.module';
 import { OffersModule } from './offers/offers.module';
-import { WishlistsModule } from './wishlists/wishlists.module';
+import { WishlistlistsModule } from './wishlistlists/wishlistlists.module';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { WishlistsModule } from './wishlists/wishlists.module';
       username: 'student',
       password: 'student',
       database: 'nest_project',
-      entities: [User, Wish, Offer, Wishlist],
+      entities: [User, Wish, Offer, Wishlistlist],
       synchronize: true,
       schema: 'nest_project',
     }),
@@ -31,7 +31,7 @@ import { WishlistsModule } from './wishlists/wishlists.module';
     HashModule,
     WishesModule,
     OffersModule,
-    WishlistsModule,
+    WishlistlistsModule,
   ],
 })
 export class AppModule {}

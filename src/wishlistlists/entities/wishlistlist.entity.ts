@@ -1,6 +1,6 @@
 import { User } from './../../users/entities/user.entity';
 import { Wish } from './../../wishes/entities/wish.entity';
-import { Max, Min } from 'class-validator';
+import { Min, Max } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Wishlist {
+export class Wishlistlist {
   @PrimaryGeneratedColumn()
   id: number;
 

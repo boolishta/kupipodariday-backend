@@ -1,5 +1,5 @@
+import { Wishlistlist } from './../../wishlistlists/entities/wishlistlist.entity';
 import { Offer } from '../../offers/entities/offer.entity';
-import { Wishlist } from '../../wishlists/entities/wishlist.entity';
 import { User } from '../../users/entities/user.entity';
 import { IsUrl, Length } from 'class-validator';
 import {
@@ -62,9 +62,9 @@ export class Wish {
   @ManyToMany(() => Offer, (offer) => offer.item)
   offers: Offer[];
 
-  @ManyToMany(() => Wishlist, (wishlist) => wishlist.items)
+  @ManyToMany(() => Wishlistlist, (wishlist) => wishlist.items)
   @JoinTable()
-  wishlists: Wishlist[];
+  wishlists: Wishlistlist[];
 
   @Column({ default: 0 })
   copied: number;

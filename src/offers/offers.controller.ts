@@ -31,4 +31,9 @@ export class OffersController {
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.offersService.findOneWithRelations(id);
   }
+
+  @Get()
+  findAll() {
+    return this.offersService.findAll();
+  }
 }

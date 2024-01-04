@@ -59,4 +59,8 @@ export class OffersService {
     }
     return offer;
   }
+
+  findAll() {
+    return this.offersRepository.find();
+  }
 }

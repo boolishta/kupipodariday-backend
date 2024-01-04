@@ -60,6 +60,7 @@ export class Wish {
   description: string;
 
   @ManyToMany(() => Offer, (offer) => offer.item)
+  @JoinTable()
   offers: Offer[];
 
   @ManyToMany(() => Wishlistlist, (wishlist) => wishlist.items)

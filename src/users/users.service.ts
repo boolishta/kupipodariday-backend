@@ -1,3 +1,4 @@
+import { WishesService } from './../wishes/wishes.service';
 import { Wish } from './../wishes/entities/wish.entity';
 import { HashService } from './../hash/hash.service';
 import { ErrorCode } from './../exceptions/error-codes';
@@ -5,7 +6,7 @@ import { ServerException } from './../exceptions/server.exception';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Like, Repository } from 'typeorm';
 
@@ -15,6 +16,8 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly hashService: HashService,
+    @Inject(forwardRef(() => WishesService))
+    private readonly wishesService: WishesService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -60,14 +63,14 @@ export class UsersService {
       where: {
         id,
       },
-      relations: {
-        wishes: true,
-      },
     });
     if (!user) {
       throw new ServerException(ErrorCode.UserNotFound);
     }
-    return user.wishes;
+    return this.wishesService.findUserWishesWithRelations(id, {
+      owner: true,
+      offers: true,
+    });
   }
 
   async getUserByUsername(username: string): Promise<User> {
@@ -83,18 +86,13 @@ export class UsersService {
   }
 
   async getUserWishesByUsername(username: string): Promise<Wish[]> {
-    const user = await this.userRepository.findOne({
-      where: {
-        username,
-      },
-      relations: {
-        wishes: true,
-      },
-    });
+    const user = await this.userRepository.findOneBy({ username });
     if (!user) {
       throw new ServerException(ErrorCode.UserNotFound);
     }
-    return user.wishes;
+    return this.wishesService.findUserWishesWithRelations(user.id, {
+      offers: true,
+    });
   }
 
   findMany(query: string): Promise<User[]> {

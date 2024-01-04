@@ -3,7 +3,7 @@ import { ServerException } from './../exceptions/server.exception';
 import { UsersService } from './../users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { Repository } from 'typeorm';
@@ -13,6 +13,7 @@ export class WishesService {
   constructor(
     @InjectRepository(Wish)
     private readonly wishesRepository: Repository<Wish>,
+    @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
   ) {}
 
@@ -42,6 +43,19 @@ export class WishesService {
   findWishByUserId(userId: number, wishId: number) {
     return this.wishesRepository.findOne({
       where: { id: wishId, owner: { id: userId } },
+    });
+  }
+
+  findUserWishesWithRelations(
+    userId: number,
+    relations: { owner?: boolean; offers?: boolean } = {},
+  ) {
+    return this.wishesRepository.find({
+      where: { owner: { id: userId } },
+      relations: {
+        owner: relations?.owner || false,
+        offers: relations?.offers || false,
+      },
     });
   }
 

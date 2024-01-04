@@ -46,16 +46,22 @@ export class UsersService {
   }
 
   async updateById(id: number, updateUserDto: UpdateUserDto) {
-    // TODO: обновлять только те данные которые пришли с фронта
-    const hash = await this.hashService.hashPassword(updateUserDto.password);
-    await this.userRepository.update(
-      { id },
-      {
-        ...updateUserDto,
-        password: hash,
-      },
-    );
-    return this.findById(id);
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new ServerException(ErrorCode.UserNotFound);
+    }
+
+    user.username = updateUserDto.username || user.username;
+    user.about = updateUserDto.about || user.about;
+    user.avatar = updateUserDto.avatar || user.avatar;
+    user.email = updateUserDto.email || user.email;
+    user.password = updateUserDto.password
+      ? await this.hashService.hashPassword(updateUserDto.password)
+      : user.password;
+
+    await this.userRepository.save(user);
+
+    return user;
   }
 
   async getUserWishes(id: number): Promise<Wish[]> {

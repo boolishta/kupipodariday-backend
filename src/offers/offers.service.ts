@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Offer } from './entities/offer.entity';
 import { Injectable } from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 
 @Injectable()
 export class OffersService {
@@ -15,6 +15,7 @@ export class OffersService {
     private readonly offersRepository: Repository<Offer>,
     private readonly userService: UsersService,
     private readonly wishesService: WishesService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(userId: number, createOfferDto: CreateOfferDto) {
@@ -32,18 +33,28 @@ export class OffersService {
     if (createOfferDto.amount > item.price - item.raised) {
       throw new ServerException(ErrorCode.AmountCannotExceedValueGift);
     }
-    await this.wishesService.updateWishRaised(
-      createOfferDto.itemId,
-      item.raised + createOfferDto.amount,
-    );
-    const offer = this.offersRepository.create({
-      user,
-      item,
-      amount: createOfferDto.amount,
-      hidden: createOfferDto.hidden,
-    });
-    const result = await this.offersRepository.save(offer);
-    return result;
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      await this.wishesService.updateWishRaised(
+        createOfferDto.itemId,
+        item.raised + createOfferDto.amount,
+      );
+      const offer = this.offersRepository.create({
+        user,
+        item,
+        amount: createOfferDto.amount,
+        hidden: createOfferDto.hidden,
+      });
+      const result = await this.offersRepository.save(offer);
+      await queryRunner.commitTransaction();
+      return result;
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async findOneWithRelations(id: number) {

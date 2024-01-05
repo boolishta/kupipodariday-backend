@@ -10,6 +10,7 @@ export enum ErrorCode {
   AmountCannotExceedValueGift = 106,
   OfferNotFound = 107,
   WishlistNotFound = 108,
+  CreateOfferError = 109,
 }
 
 export const code2message = new Map<ErrorCode, string>([
@@ -31,6 +32,7 @@ export const code2message = new Map<ErrorCode, string>([
   ],
   [ErrorCode.OfferNotFound, 'Предложение не найдено'],
   [ErrorCode.WishlistNotFound, 'Список подарков не найден'],
+  [ErrorCode.CreateOfferError, 'Не удалось создать предложение'],
 ]);
 
 export const code2status = new Map<ErrorCode, HttpStatus>([
@@ -43,4 +45,5 @@ export const code2status = new Map<ErrorCode, HttpStatus>([
   [ErrorCode.AmountCannotExceedValueGift, HttpStatus.UNPROCESSABLE_ENTITY],
   [ErrorCode.OfferNotFound, HttpStatus.NOT_FOUND],
   [ErrorCode.WishlistNotFound, HttpStatus.NOT_FOUND],
+  [ErrorCode.CreateOfferError, HttpStatus.INTERNAL_SERVER_ERROR],
 ]);

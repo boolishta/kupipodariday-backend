@@ -48,6 +48,10 @@ export class UsersService {
     return this.userRepository.findOneBy({ username });
   }
 
+  findByEmail(email: string): Promise<User> {
+    return this.userRepository.findOneBy({ email });
+  }
+
   findUserByUsernameOrEmail(username: string, email: string) {
     return this.userRepository.findOne({ where: [{ username }, { email }] });
   }
@@ -56,6 +60,20 @@ export class UsersService {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new ServerException(ErrorCode.UserNotFound);
+    }
+
+    if (updateUserDto.username) {
+      const user = await this.findByUsername(updateUserDto.username);
+      if (user) {
+        throw new ServerException(ErrorCode.UserAlreadyExists);
+      }
+    }
+
+    if (updateUserDto.email) {
+      const user = await this.findByEmail(updateUserDto.email);
+      if (user) {
+        throw new ServerException(ErrorCode.UserAlreadyExists);
+      }
     }
 
     user.username = updateUserDto.username || user.username;

@@ -21,20 +21,23 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    try {
-      const hash = await this.hashService.hashPassword(createUserDto.password);
-      const user = this.userRepository.create({
-        username: createUserDto.username,
-        email: createUserDto.email,
-        about: createUserDto.about,
-        avatar: createUserDto.avatar,
-        password: hash,
-      });
-      const result = await this.userRepository.save(user);
-      return result;
-    } catch (e) {
+    const user = await this.findUserByUsernameOrEmail(
+      createUserDto.username,
+      createUserDto.email,
+    );
+    if (user) {
       throw new ServerException(ErrorCode.UserAlreadyExists);
     }
+    const hash = await this.hashService.hashPassword(createUserDto.password);
+    const newUser = this.userRepository.create({
+      username: createUserDto.username,
+      email: createUserDto.email,
+      about: createUserDto.about,
+      avatar: createUserDto.avatar,
+      password: hash,
+    });
+    const result = await this.userRepository.save(newUser);
+    return result;
   }
 
   findById(id: number): Promise<User> {
@@ -43,6 +46,10 @@ export class UsersService {
 
   findByUsername(username: string): Promise<User> {
     return this.userRepository.findOneBy({ username });
+  }
+
+  findUserByUsernameOrEmail(username: string, email: string) {
+    return this.userRepository.findOne({ where: [{ username }, { email }] });
   }
 
   async updateById(id: number, updateUserDto: UpdateUserDto) {

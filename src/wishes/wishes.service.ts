@@ -6,7 +6,7 @@ import { Wish } from './entities/wish.entity';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 
 @Injectable()
 export class WishesService {
@@ -15,6 +15,7 @@ export class WishesService {
     private readonly wishesRepository: Repository<Wish>,
     @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(ownerId: number, createWishDto: CreateWishDto) {
@@ -113,6 +114,12 @@ export class WishesService {
     return wish;
   }
 
+  findUserWishByLink(userId: number, link: string) {
+    return this.wishesRepository.findOne({
+      where: { link, owner: { id: userId } },
+    });
+  }
+
   async copyWish(userId: number, id: number) {
     const owner = await this.userService.findById(userId);
     if (!owner) {
@@ -124,17 +131,32 @@ export class WishesService {
     if (!wish) {
       throw new ServerException(ErrorCode.WishNotFound);
     }
-    const newWish = new Wish();
-    newWish.name = wish.name;
-    newWish.link = wish.link;
-    newWish.image = wish.image;
-    newWish.price = wish.price;
-    newWish.description = wish.description;
-    newWish.owner = owner;
+    const userWish = await this.findUserWishByLink(userId, wish.link);
+    if (userWish) {
+      throw new ServerException(ErrorCode.WishCopyError);
+    }
 
-    wish.copied = (wish.copied || 0) + 1;
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    await this.wishesRepository.save([wish, newWish]);
-    return newWish;
+    try {
+      const newWish = new Wish();
+      newWish.name = wish.name;
+      newWish.link = wish.link;
+      newWish.image = wish.image;
+      newWish.price = wish.price;
+      newWish.description = wish.description;
+      newWish.owner = owner;
+
+      wish.copied = (wish.copied || 0) + 1;
+
+      await this.wishesRepository.save([wish, newWish]);
+      return newWish;
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

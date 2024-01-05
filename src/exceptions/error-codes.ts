@@ -12,6 +12,7 @@ export enum ErrorCode {
   WishlistNotFound = 108,
   CreateOfferError = 109,
   CannotChangeWishError = 110,
+  WishCopyError = 111,
 }
 
 export const code2message = new Map<ErrorCode, string>([
@@ -38,6 +39,7 @@ export const code2message = new Map<ErrorCode, string>([
     ErrorCode.CannotChangeWishError,
     'Вы не можете изменять стоимость подарка, если уже есть желающие скинуться',
   ],
+  [ErrorCode.WishCopyError, 'Вы уже копировали себе этот подарок'],
 ]);
 
 export const code2status = new Map<ErrorCode, HttpStatus>([
@@ -52,4 +54,5 @@ export const code2status = new Map<ErrorCode, HttpStatus>([
   [ErrorCode.WishlistNotFound, HttpStatus.NOT_FOUND],
   [ErrorCode.CreateOfferError, HttpStatus.INTERNAL_SERVER_ERROR],
   [ErrorCode.CannotChangeWishError, HttpStatus.FORBIDDEN],
+  [ErrorCode.WishCopyError, HttpStatus.FORBIDDEN],
 ]);

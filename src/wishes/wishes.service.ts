@@ -64,6 +64,9 @@ export class WishesService {
     if (!wish) {
       throw new ServerException(ErrorCode.WishNotFound);
     }
+    if (updateWishDto.price && wish.raised > 0) {
+      throw new ServerException(ErrorCode.CannotChangeWishError);
+    }
     await this.wishesRepository.update({ id }, updateWishDto);
     const updatedWish = await this.findWishById(wish.id);
     return updatedWish;
